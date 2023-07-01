@@ -1,52 +1,41 @@
-from rest_framework import generics
-from .models import Car
-from .serializers import CarSerializer
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import UserSerializer, RegisterSerializer, DriverRegistrationSerializer, CompanyRegisterSerializer
+from .serializers import UserSerializer, RegisterSerializer, CompanyRegistrationSerializer, \
+    DriverRegistrationSerializer
 from django.contrib.auth import login
-from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
-from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 
-class DriverRegistrationView(APIView):
-    def post(self, request):
-        serializer = DriverRegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            # Создание и сохранение водителя
-            user = User.objects.create_user(
-                username=serializer.validated_data['username'],
-                password=serializer.validated_data['password']
-            )
-            driver_license = serializer.validated_data['driver_license']
-            # Сохраните другие данные водителя в соответствующей модели
-            # ...
-            return Response({'message': 'Driver registration successful.'})
-        return Response(serializer.errors, status=400)
+class DriverRegistrationAPI(generics.GenericAPIView):
+    serializer_class = DriverRegistrationSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        driver = serializer.save()
+        return Response({
+            "driver": serializer.data
+        })
 
 
-class CompanyRegistrationView(APIView):
-    def post(self, request):
-        serializer = CompanyRegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            # Проверяем роль пользователя
-            if request.user.role != 'company':
-                return Response({'error': 'Only users with role "company" can register drivers.'}, status=403)
+class CompanyRegistrationAPI(generics.GenericAPIView):
+    serializer_class = CompanyRegistrationSerializer
 
-            # Логика регистрации компании
-            return Response({'message': 'Company registration successful.'})
-        return Response(serializer.errors, status=400)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        company = serializer.save()
+        return Response({
+            "company": serializer.data
+        })
 
 
-class CarAPIView(generics.ListAPIView):
-    queryset = Car.objects.all()
-    serializer_class = CarSerializer
-
+# ------------------------------------------------------------------------
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):

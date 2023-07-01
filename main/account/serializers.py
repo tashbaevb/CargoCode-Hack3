@@ -1,41 +1,42 @@
-from rest_framework import serializers, viewsets
-from .models import Car, Company
+from rest_framework import serializers
+from .models import Company, Driver
 from django.contrib.auth.models import User
 
 
-class DriverRegistrationSerializer(serializers.Serializer):
-    # Поля для регистрации водителя
+#
+# class DriverRegistrationSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Driver
+#         fields = (
+#             'id', 'driver_license', 'straxovka', 'car_number', 'car_color', 'car_title', 'car_year', 'car_type', 'bank',
+#             'username', 'email', 'password')
+#         extra_kwargs = {'password': {'write_only': True}}
+#
+#     def create(self, validated_data):
+#         user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+#         user.role = 'driver'
+#         user.save()
+#         driver = Driver.objects.create(user=user, driver_license=validated_data['driver_license'],
+#                                        straxovka=validated_data['straxovka'], car_number=validated_data['car_number'],
+#                                        car_color=validated_data['car_color'], car_title=validated_data['car_title'],
+#                                        car_year=validated_data['car_year'], car_type=validated_data['car_type'],
+#                                        bank=validated_data['bank'])
+#         return driver
 
-
-
-class CompanyRegisterSerializer(serializers.ModelSerializer):
-    company_name = serializers.CharField(write_only=True)
-    company_address = serializers.CharField(write_only=True)
-
+# Driver Serializer
+class DriverRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'password', 'company_name', 'company_address')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-        user.role = 'company'
-        user.save()
-
-        company = Company.objects.create(
-            user=user,
-            company_name=validated_data['company_name'],
-            company_address=validated_data['company_address']
-        )
-
-        return user
+        model = Driver
+        fields = ('driver_license', 'straxovka', 'car_number', 'car_color', 'car_title', 'car_year', 'car_type', 'bank')
 
 
-class CarSerializer(serializers.ModelSerializer):
+class CompanyRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Car
-        fields = '__all__'
+        model = Company
+        fields = ('id', 'company_name', 'company_address', 'number_of_driver', 'descriptions', 'bank_account')
 
+
+# ------------------------------------------------------------------------------------
 
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
@@ -46,11 +47,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
-    role = serializers.CharField(default='user')
-
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password', 'role')
+        fields = ('id', 'username', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -59,21 +58,4 @@ class RegisterSerializer(serializers.ModelSerializer):
             validated_data['email'],
             validated_data['password']
         )
-        user.role = validated_data['role']
-        user.save()
         return user
-
-
-#
-# # Register Serializer
-# class RegisterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('id', 'username', 'email', 'password')
-#         extra_kwargs = {'password': {'write_only': True}}
-#
-#     def create(self, validated_data):
-#         user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-#         user.role = 'user'
-#         user.save()
-#         return user
