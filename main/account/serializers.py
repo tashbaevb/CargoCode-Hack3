@@ -43,7 +43,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = ('id', 'user', 'company_name', 'company_address', 'number_of_driver', 'descriptions', 'bank_account', 'dot_number')
+        fields = ('id', 'user', 'company_name', 'company_address', 'descriptions', 'bank_account', 'dot_number')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
