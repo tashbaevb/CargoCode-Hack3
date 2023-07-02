@@ -1,6 +1,8 @@
+import base64
 from rest_framework import serializers
 from .models import Driver, Company
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 
 
 # User Serializer
@@ -22,7 +24,17 @@ class DriverSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         user = User.objects.create_user(**user_data)
-        driver = Driver.objects.create(user=user, **validated_data)
+
+        driver_license_file = validated_data.pop('driver_license')
+        straxovka_file = validated_data.pop('straxovka')
+
+        driver_license_data = base64.b64decode(driver_license_file)
+        straxovka_data = base64.b64decode(straxovka_file)
+
+        driver_license = ContentFile(driver_license_data, name='driver_license')
+        straxovka = ContentFile(straxovka_data, name='straxovka')
+
+        driver = Driver.objects.create(user=user, driver_license=driver_license, straxovka=straxovka, **validated_data)
         return driver
 
 
@@ -31,7 +43,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = ('id', 'user', 'company_name', 'company_address', 'number_of_driver', 'descriptions', 'bank_account')
+        fields = ('id', 'user', 'company_name', 'company_address', 'number_of_driver', 'descriptions', 'bank_account', 'dot_number')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -57,7 +69,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
-# Register Serializr
+# Register Serializer
 # class RegisterSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = User

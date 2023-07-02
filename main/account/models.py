@@ -10,8 +10,8 @@ TYPE_OF_CAR = (
 
 class Driver(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    driver_license = models.FileField(max_length=100)
-    straxovka = models.FileField(max_length=100)
+    driver_license = models.TextField()
+    straxovka = models.TextField()
     car_number = models.CharField(max_length=100)
     car_color = models.CharField(max_length=100)
     car_title = models.CharField(max_length=100)
@@ -27,3 +27,4 @@ class Company(models.Model):
     number_of_driver = models.IntegerField()
     descriptions = models.TextField()
     bank_account = models.CharField(max_length=100)
+    dot_number = models.IntegerField(null=True)
