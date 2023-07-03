@@ -24,7 +24,7 @@ class Company(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=100)
     company_address = models.CharField(max_length=100)
-    number_of_driver = models.IntegerField()
+    number_of_driver = models.IntegerField( null=True)
     descriptions = models.TextField()
     bank_account = models.CharField(max_length=100)
     dot_number = models.IntegerField(null=True)
