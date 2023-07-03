@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -38,13 +37,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "account",
     "rest_framework",  # for apis
     "channels",  # for sockets
     "corsheaders",  # for interactions with frontend
     # auth
     "knox",
     # local
-    "account",
     "chat",
 ]
 
@@ -55,16 +54,15 @@ SITE_ID = 1
 # We're using the IsAuthenticated permission
 # class because we want users to be logged in to chat.
 REST_FRAMEWORK = {
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #     # 'rest_framework.authentication.BasicAuthentication',
+    #     # 'rest_framework.authentication.SessionAuthentication',
+    #     "knox.auth.TokenAuthentication",
+    # ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        "knox.auth.TokenAuthentication",
-    ],
 }
-
 
 # AUTH_USER_MODEL = "account.Driver"  # turn this off if it cause problems
 
@@ -112,7 +110,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "main.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -122,7 +119,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -142,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -153,7 +148,6 @@ TIME_ZONE = "Asia/Bishkek"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
